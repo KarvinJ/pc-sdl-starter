@@ -8,25 +8,25 @@
 const int SPEED = 600;
 const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 544;
-const int FRAME_RATE = 60;
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
-
-TTF_Font *fontSquare = NULL;
-SDL_Texture *subtitle = nullptr;
-SDL_Texture *title = NULL;
-SDL_Color fontColor = {0, 0, 0};
-SDL_Surface *surface2 = nullptr;
-
-SDL_Rect subtitleRect;
-
-SDL_Rect titleRect;
 
 Mix_Chunk *test = nullptr;
 SDL_Texture *sprite = nullptr;
 
 SDL_Rect spriteBounds = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 38, 34};
+
+SDL_Texture *title = nullptr;
+SDL_Rect titleRect;
+
+SDL_Texture *subtitle = nullptr;
+SDL_Rect subtitleRect;
+
+SDL_Surface *pressStartSurface = nullptr;
+
+TTF_Font *fontSquare = nullptr;
+SDL_Color fontColor = {255, 255, 255};
 
 void updateTitle(const char *text)
 {
@@ -49,14 +49,12 @@ void updateTitle(const char *text)
 
 SDL_Texture *loadSprite(const char *file, SDL_Renderer *renderer)
 {
-
     SDL_Texture *texture = IMG_LoadTexture(renderer, file);
     return texture;
 }
 
 void renderSprite(SDL_Texture *sprite, SDL_Renderer *renderer, SDL_Rect spriteBounds)
 {
-
     SDL_QueryTexture(sprite, NULL, NULL, &spriteBounds.w, &spriteBounds.h);
     SDL_RenderCopy(renderer, sprite, NULL, &spriteBounds);
 }
@@ -76,7 +74,6 @@ Mix_Chunk *loadSound(const char *p_filePath)
 
 void quitGame()
 {
-
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -84,7 +81,6 @@ void quitGame()
 
 void handleEvents()
 {
-
     SDL_Event event;
 
     while (SDL_PollEvent(&event))
@@ -92,7 +88,6 @@ void handleEvents()
 
         if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE)
         {
-
             quitGame();
             exit(0);
         }
@@ -106,7 +101,6 @@ void handleEvents()
 
 void update(float deltaTime)
 {
-
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
     if (currentKeyStates[SDL_SCANCODE_W] && spriteBounds.y > 0)
@@ -132,7 +126,7 @@ void update(float deltaTime)
 
 void render()
 {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     SDL_QueryTexture(title, NULL, NULL, &titleRect.w, &titleRect.h);
@@ -146,17 +140,6 @@ void render()
     renderSprite(sprite, renderer, spriteBounds);
 
     SDL_RenderPresent(renderer);
-}
-
-void capFrameRate(Uint32 frameStartTime)
-{
-
-    Uint32 frameTime = SDL_GetTicks() - frameStartTime;
-
-    if (frameTime < 1000 / FRAME_RATE)
-    {
-        SDL_Delay(1000 / FRAME_RATE - frameTime);
-    }
 }
 
 int main(int argc, char *args[])
@@ -199,14 +182,14 @@ int main(int argc, char *args[])
         return 5;
     }
     // open font files
-    TTF_Font *font2P = TTF_OpenFont("res/fonts/PressStart2P.ttf", 16);
-    if (font2P == NULL)
+    TTF_Font *pressStartFont = TTF_OpenFont("res/fonts/PressStart2P.ttf", 16);
+    if (pressStartFont == nullptr)
     {
         printf("TTF_OpenFont font2P: %s\n", TTF_GetError());
         return 2;
     }
     fontSquare = TTF_OpenFont("res/fonts/square_sans_serif_7.ttf", 64);
-    if (fontSquare == NULL)
+    if (fontSquare == nullptr)
     {
         printf("TTF_OpenFont fontSquare: %s\n", TTF_GetError());
         return 2;
@@ -215,21 +198,23 @@ int main(int argc, char *args[])
     updateTitle("Hello! test");
 
     // load subtitle
-    surface2 = TTF_RenderUTF8_Blended(font2P, "Press start to quit", fontColor);
-    if (surface2 == NULL)
+    pressStartSurface = TTF_RenderUTF8_Blended(pressStartFont, "Press start to quit", fontColor);
+    if (pressStartSurface == nullptr)
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to load create subtitle! SDL Error: %s\n", SDL_GetError());
         return 3;
     }
-    subtitle = SDL_CreateTextureFromSurface(renderer, surface2);
-    if (title == NULL)
+    subtitle = SDL_CreateTextureFromSurface(renderer, pressStartSurface);
+    if (title == nullptr)
     {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to load texture for image block.bmp! SDL Error: %s\n", SDL_GetError());
         return 4;
     }
-    SDL_FreeSurface(surface2);
+    SDL_FreeSurface(pressStartSurface);
 
     SDL_QueryTexture(subtitle, NULL, NULL, &subtitleRect.w, &subtitleRect.h);
+    // After use the &subtitleRect.w, &subtitleRect.h in the SDL_QueryTexture.
+    //  I get the width and height of the actual texture
     subtitleRect.x = SCREEN_WIDTH / 2 - subtitleRect.w / 2;
     subtitleRect.y = subtitleRect.h / 2;
 
@@ -243,7 +228,6 @@ int main(int argc, char *args[])
 
     while (true)
     {
-
         currentFrameTime = SDL_GetTicks();
 
         deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
