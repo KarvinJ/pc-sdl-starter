@@ -35,16 +35,10 @@ void handleEvents()
 
     while (SDL_PollEvent(&event))
     {
-
         if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE)
         {
             quitGame();
             exit(0);
-        }
-
-        if (event.key.keysym.sym == SDLK_SPACE)
-        {
-            Mix_PlayChannel(-1, test, 0);
         }
     }
 }
@@ -119,6 +113,7 @@ void update(float deltaTime)
 
     if (currentKeyStates[SDL_SCANCODE_SPACE])
     {
+        Mix_PlayChannel(-1, test, 0);
         updateTitle("Space Pressed");
     }
 }
