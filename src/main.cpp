@@ -116,6 +116,11 @@ void update(float deltaTime)
     {
         spriteBounds.x += SPEED * deltaTime;
     }
+
+    if (currentKeyStates[SDL_SCANCODE_SPACE])
+    {
+        updateTitle("Space Pressed");
+    }
 }
 
 void renderSprite(SDL_Texture *sprite, SDL_Renderer *renderer, SDL_Rect spriteBounds)
