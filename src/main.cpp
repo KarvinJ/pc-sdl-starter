@@ -3,11 +3,12 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
-#include <vector>
 
 const int SPEED = 600;
 const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 544;
+
+int score = 0;
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
@@ -114,7 +115,12 @@ void update(float deltaTime)
     if (currentKeyStates[SDL_SCANCODE_SPACE])
     {
         Mix_PlayChannel(-1, test, 0);
-        updateTitle("Space Pressed");
+
+        score++;
+        std::string string = std::to_string(score);
+        char const *intToChar = string.c_str();
+
+        updateTitle(intToChar);
     }
 }
 
