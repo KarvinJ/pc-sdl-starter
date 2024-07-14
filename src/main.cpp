@@ -14,9 +14,14 @@ SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 
 Mix_Chunk *test = nullptr;
-SDL_Texture *sprite = nullptr;
 
-SDL_Rect spriteBounds = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 38, 34};
+typedef struct
+{
+    SDL_Texture *texture;
+    SDL_Rect textureBounds;
+} Sprite;
+
+Sprite alienSprite;
 
 SDL_Texture *title = nullptr;
 SDL_Rect titleRect;
@@ -26,7 +31,7 @@ SDL_Color fontColor = {255, 255, 255};
 void quitGame()
 {
     Mix_FreeChunk(test);
-    SDL_DestroyTexture(sprite);
+    SDL_DestroyTexture(alienSprite.texture);
     SDL_DestroyTexture(title);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
@@ -75,10 +80,20 @@ void updateTitle(const char *text)
     SDL_FreeSurface(surface1);
 }
 
-SDL_Texture *loadSprite(const char *file, SDL_Renderer *renderer)
+Sprite loadSprite(const char *file, int positionX, int positionY)
 {
+    SDL_Rect textureBounds = {positionX, positionY, 0, 0};
+
     SDL_Texture *texture = IMG_LoadTexture(renderer, file);
-    return texture;
+
+    if (texture != nullptr)
+    {
+        SDL_QueryTexture(texture, NULL, NULL, &textureBounds.w, &textureBounds.h);
+    }
+
+    Sprite sprite = {texture, textureBounds}; 
+
+    return sprite;
 }
 
 Mix_Chunk *loadSound(const char *p_filePath)
@@ -98,24 +113,24 @@ void update(float deltaTime)
 {
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
-    if (currentKeyStates[SDL_SCANCODE_W] && spriteBounds.y > 0)
+    if (currentKeyStates[SDL_SCANCODE_W] && alienSprite.textureBounds.y > 0)
     {
-        spriteBounds.y -= SPEED * deltaTime;
+        alienSprite.textureBounds.y -= SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_S] && spriteBounds.y < SCREEN_HEIGHT - spriteBounds.h)
+    else if (currentKeyStates[SDL_SCANCODE_S] && alienSprite.textureBounds.y < SCREEN_HEIGHT - alienSprite.textureBounds.h)
     {
-        spriteBounds.y += SPEED * deltaTime;
+        alienSprite.textureBounds.y += SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_A] && spriteBounds.x > 0)
+    else if (currentKeyStates[SDL_SCANCODE_A] && alienSprite.textureBounds.x > 0)
     {
-        spriteBounds.x -= SPEED * deltaTime;
+        alienSprite.textureBounds.x -= SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_D] && spriteBounds.x < SCREEN_WIDTH - spriteBounds.w)
+    else if (currentKeyStates[SDL_SCANCODE_D] && alienSprite.textureBounds.x < SCREEN_WIDTH - alienSprite.textureBounds.w)
     {
-        spriteBounds.x += SPEED * deltaTime;
+        alienSprite.textureBounds.x += SPEED * deltaTime;
     }
 
     if (currentKeyStates[SDL_SCANCODE_SPACE])
@@ -130,10 +145,9 @@ void update(float deltaTime)
     }
 }
 
-void renderSprite(SDL_Texture *sprite, SDL_Renderer *renderer, SDL_Rect spriteBounds)
+void renderSprite(Sprite sprite)
 {
-    SDL_QueryTexture(sprite, NULL, NULL, &spriteBounds.w, &spriteBounds.h);
-    SDL_RenderCopy(renderer, sprite, NULL, &spriteBounds);
+    SDL_RenderCopy(renderer, sprite.texture, NULL, &sprite.textureBounds);
 }
 
 void render()
@@ -150,7 +164,7 @@ void render()
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    renderSprite(sprite, renderer, spriteBounds);
+    renderSprite(alienSprite);
 
     SDL_RenderPresent(renderer);
 }
@@ -200,7 +214,8 @@ int main(int argc, char *args[])
     // load title
     updateTitle("Hello!");
     
-    sprite = loadSprite("res/sprites/alien_1.png", renderer);
+    alienSprite = loadSprite("res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
     test = loadSound("res/sounds/magic.wav");
 
     Uint32 previousFrameTime = SDL_GetTicks();
