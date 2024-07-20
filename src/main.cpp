@@ -4,6 +4,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include "sdl_starter.h"
+#include "sdl_assets_loader.h"
 
 const int SPEED = 600;
 const int SCREEN_WIDTH = 960;
@@ -15,12 +16,6 @@ SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 
 Mix_Chunk *test = nullptr;
-
-typedef struct
-{
-    SDL_Texture *texture;
-    SDL_Rect textureBounds;
-} Sprite;
 
 Sprite alienSprite;
 
@@ -79,35 +74,6 @@ void updateTitle(const char *text)
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to load texture for image block.bmp! SDL Error: %s\n", SDL_GetError());
     }
     SDL_FreeSurface(surface1);
-}
-
-Sprite loadSprite(const char *file, int positionX, int positionY)
-{
-    SDL_Rect textureBounds = {positionX, positionY, 0, 0};
-
-    SDL_Texture *texture = IMG_LoadTexture(renderer, file);
-
-    if (texture != nullptr)
-    {
-        SDL_QueryTexture(texture, NULL, NULL, &textureBounds.w, &textureBounds.h);
-    }
-
-    Sprite sprite = {texture, textureBounds}; 
-
-    return sprite;
-}
-
-Mix_Chunk *loadSound(const char *p_filePath)
-{
-    Mix_Chunk *sound = nullptr;
-
-    sound = Mix_LoadWAV(p_filePath);
-    if (sound == nullptr)
-    {
-        printf("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
-    }
-
-    return sound;
 }
 
 void update(float deltaTime)
@@ -184,7 +150,7 @@ int main(int argc, char *args[])
     // load title
     updateTitle("Hello!");
     
-    alienSprite = loadSprite("res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    alienSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
     test = loadSound("res/sounds/magic.wav");
 
