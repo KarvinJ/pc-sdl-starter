@@ -161,9 +161,7 @@ int main(int argc, char *args[])
     while (true)
     {
         currentFrameTime = SDL_GetTicks();
-
         deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
-
         previousFrameTime = currentFrameTime;
 
         handleEvents();
