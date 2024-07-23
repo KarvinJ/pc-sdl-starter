@@ -22,6 +22,8 @@ Sprite alienSprite;
 SDL_Texture *title = nullptr;
 SDL_Rect titleRect;
 
+TTF_Font *fontSquare = nullptr;
+
 SDL_Color fontColor = {255, 255, 255};
 
 void quitGame()
@@ -51,29 +53,30 @@ void handleEvents()
     }
 }
 
-void updateTitle(const char *text)
+void updateTextureText(SDL_Texture *&texture, const char *text)
 {
-    TTF_Font *fontSquare = TTF_OpenFont("res/fonts/square_sans_serif_7.ttf", 64);
     if (fontSquare == nullptr)
     {
         printf("TTF_OpenFont fontSquare: %s\n", TTF_GetError());
     }
 
-    SDL_Surface *surface1 = TTF_RenderUTF8_Blended(fontSquare, text, fontColor);
-    if (surface1 == NULL)
+    SDL_Surface *surface = TTF_RenderUTF8_Blended(fontSquare, text, fontColor);
+    if (surface == nullptr)
     {
         printf("TTF_OpenFont: %s\n", TTF_GetError());
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to load create title! SDL Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to create text surface! SDL Error: %s\n", SDL_GetError());
         exit(3);
     }
-    SDL_DestroyTexture(title);
-    title = SDL_CreateTextureFromSurface(renderer, surface1);
-    if (title == NULL)
+
+    SDL_DestroyTexture(texture);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (texture == nullptr)
     {
         printf("TTF_OpenFont: %s\n", TTF_GetError());
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to load texture for image block.bmp! SDL Error: %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to create texture from surface! SDL Error: %s\n", SDL_GetError());
     }
-    SDL_FreeSurface(surface1);
+
+    SDL_FreeSurface(surface);
 }
 
 void update(float deltaTime)
@@ -108,7 +111,7 @@ void update(float deltaTime)
         std::string string = std::to_string(score);
         char const *intToChar = string.c_str();
 
-        updateTitle(intToChar);
+        updateTextureText(title, intToChar);
     }
 }
 
@@ -146,9 +149,12 @@ int main(int argc, char *args[])
     {
         return 1;
     }
+
+//load font
+    fontSquare = TTF_OpenFont("res/fonts/square_sans_serif_7.ttf", 36);
     
     // load title
-    updateTitle("Hello!");
+    updateTextureText(title, "0");
     
     alienSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
