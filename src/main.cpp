@@ -35,34 +35,6 @@ void quitGame()
     SDL_Quit();
 }
 
-void updateTextureText(SDL_Texture *&texture, const char *text)
-{
-    SDL_Color fontColor = {255, 255, 255};
-
-    if (fontSquare == nullptr)
-    {
-        printf("TTF_OpenFont fontSquare: %s\n", TTF_GetError());
-    }
-
-    SDL_Surface *surface = TTF_RenderUTF8_Blended(fontSquare, text, fontColor);
-    if (surface == nullptr)
-    {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to create text surface! SDL Error: %s\n", SDL_GetError());
-        exit(3);
-    }
-
-    SDL_DestroyTexture(texture);
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    if (texture == nullptr)
-    {
-        printf("TTF_OpenFont: %s\n", TTF_GetError());
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Unable to create texture from surface! SDL Error: %s\n", SDL_GetError());
-    }
-
-    SDL_FreeSurface(surface);
-}
-
 void handleEvents()
 {
     SDL_Event event;
@@ -75,7 +47,7 @@ void handleEvents()
             exit(0);
         }
 
-        //To handle key pressed more precise, I use this method for handling pause the game or jumping.
+        // To handle key pressed more precise, I use this method for handling pause the game or jumping.
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
         {
             Mix_PlayChannel(-1, actionSound, 0);
@@ -83,7 +55,7 @@ void handleEvents()
             score++;
             std::string string = std::to_string(score);
 
-            updateTextureText(title, string.c_str());
+            updateTextureText(title, string.c_str(), fontSquare, renderer);
         }
     }
 }
@@ -152,12 +124,12 @@ int main(int argc, char *args[])
     fontSquare = TTF_OpenFont("res/fonts/square_sans_serif_7.ttf", 36);
 
     // load title
-    updateTextureText(title, "0");
+    updateTextureText(title, "0", fontSquare, renderer);
 
     alienSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
     actionSound = loadSound("res/sounds/magic.wav");
-    
+
     // method to reduce the volume of the sound in half.
     Mix_VolumeChunk(actionSound, MIX_MAX_VOLUME / 2);
 

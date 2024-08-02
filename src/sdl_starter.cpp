@@ -1,7 +1,7 @@
 #include "sdl_starter.h"
 
-int startSDL(SDL_Window *window, SDL_Renderer *renderer) {
-
+int startSDL(SDL_Window *window, SDL_Renderer *renderer)
+{
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         std::cout << "SDL crashed. Error: " << SDL_GetError();
