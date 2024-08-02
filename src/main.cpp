@@ -7,15 +7,13 @@
 #include "sdl_assets_loader.h"
 
 const int SPEED = 600;
-const int SCREEN_WIDTH = 960;
-const int SCREEN_HEIGHT = 544;
-
 int score = 0;
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 
-Mix_Chunk *test = nullptr;
+Mix_Chunk *actionSound = nullptr;
+Mix_Music *music = nullptr;
 
 Sprite alienSprite;
 
@@ -24,11 +22,9 @@ SDL_Rect titleRect;
 
 TTF_Font *fontSquare = nullptr;
 
-SDL_Color fontColor = {255, 255, 255};
-
 void quitGame()
 {
-    Mix_FreeChunk(test);
+    Mix_FreeChunk(actionSound);
     SDL_DestroyTexture(alienSprite.texture);
     SDL_DestroyTexture(title);
     SDL_DestroyRenderer(renderer);
@@ -41,6 +37,8 @@ void quitGame()
 
 void updateTextureText(SDL_Texture *&texture, const char *text)
 {
+    SDL_Color fontColor = {255, 255, 255};
+
     if (fontSquare == nullptr)
     {
         printf("TTF_OpenFont fontSquare: %s\n", TTF_GetError());
@@ -80,7 +78,7 @@ void handleEvents()
         //To handle key pressed more precise, I use this method for handling pause the game or jumping.
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
         {
-            Mix_PlayChannel(-1, test, 0);
+            Mix_PlayChannel(-1, actionSound, 0);
 
             score++;
             std::string string = std::to_string(score);
@@ -158,7 +156,19 @@ int main(int argc, char *args[])
 
     alienSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
-    test = loadSound("res/sounds/magic.wav");
+    actionSound = loadSound("res/sounds/magic.wav");
+    
+    // method to reduce the volume of the sound in half.
+    Mix_VolumeChunk(actionSound, MIX_MAX_VOLUME / 2);
+
+    // Load music file (only one data piece, intended for streaming)
+    music = loadMusic("res/music/music.wav");
+
+    // reduce music volume in half
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+
+    // Start playing streamed music, put -1 to loop indifinitely
+    Mix_PlayMusic(music, -1);
 
     Uint32 previousFrameTime = SDL_GetTicks();
     Uint32 currentFrameTime = previousFrameTime;
@@ -174,6 +184,4 @@ int main(int argc, char *args[])
         update(deltaTime);
         render();
     }
-
-    return 0;
 }

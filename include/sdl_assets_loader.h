@@ -14,3 +14,5 @@ typedef struct
 Sprite loadSprite(SDL_Renderer *renderer, const char *file, int positionX, int positionY);
 
 Mix_Chunk *loadSound(const char *p_filePath);
+
+Mix_Music *loadMusic(const char *p_filePath);

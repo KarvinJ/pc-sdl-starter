@@ -28,3 +28,16 @@ Mix_Chunk *loadSound(const char *p_filePath)
 
     return sound;
 }
+
+Mix_Music *loadMusic(const char *p_filePath)
+{
+    Mix_Music *music = nullptr;
+
+    music = Mix_LoadMUS(p_filePath);
+    if (music == nullptr)
+    {
+        printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
+    }
+
+    return music;
+}
