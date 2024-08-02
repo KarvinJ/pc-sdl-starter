@@ -39,20 +39,6 @@ void quitGame()
     SDL_Quit();
 }
 
-void handleEvents()
-{
-    SDL_Event event;
-
-    while (SDL_PollEvent(&event))
-    {
-        if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE)
-        {
-            quitGame();
-            exit(0);
-        }
-    }
-}
-
 void updateTextureText(SDL_Texture *&texture, const char *text)
 {
     if (fontSquare == nullptr)
@@ -79,6 +65,31 @@ void updateTextureText(SDL_Texture *&texture, const char *text)
     SDL_FreeSurface(surface);
 }
 
+void handleEvents()
+{
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event))
+    {
+        if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE)
+        {
+            quitGame();
+            exit(0);
+        }
+
+        //To handle key pressed more precise, I use this method for handling pause the game or jumping.
+        if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
+        {
+            Mix_PlayChannel(-1, test, 0);
+
+            score++;
+            std::string string = std::to_string(score);
+
+            updateTextureText(title, string.c_str());
+        }
+    }
+}
+
 void update(float deltaTime)
 {
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
@@ -101,17 +112,6 @@ void update(float deltaTime)
     else if (currentKeyStates[SDL_SCANCODE_D] && alienSprite.textureBounds.x < SCREEN_WIDTH - alienSprite.textureBounds.w)
     {
         alienSprite.textureBounds.x += SPEED * deltaTime;
-    }
-
-    if (currentKeyStates[SDL_SCANCODE_SPACE])
-    {
-        Mix_PlayChannel(-1, test, 0);
-
-        score++;
-        std::string string = std::to_string(score);
-        char const *intToChar = string.c_str();
-
-        updateTextureText(title, intToChar);
     }
 }
 
@@ -144,18 +144,18 @@ int main(int argc, char *args[])
     window = SDL_CreateWindow("My Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-   
+
     if (startSDL(window, renderer) > 0)
     {
         return 1;
     }
 
-//load font
+    // load font
     fontSquare = TTF_OpenFont("res/fonts/square_sans_serif_7.ttf", 36);
-    
+
     // load title
     updateTextureText(title, "0");
-    
+
     alienSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
     test = loadSound("res/sounds/magic.wav");
