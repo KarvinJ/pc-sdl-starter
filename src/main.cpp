@@ -155,5 +155,7 @@ int main(int argc, char *args[])
         handleEvents();
         update(deltaTime);
         render();
+
+        // capFrameRate(currentFrameTime);
     }
 }

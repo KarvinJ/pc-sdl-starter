@@ -43,3 +43,13 @@ int startSDL(SDL_Window *window, SDL_Renderer *renderer)
 
     return 0;
 }
+
+void capFrameRate(Uint32 frameStartTime)
+{
+    Uint32 frameTime = SDL_GetTicks() - frameStartTime;
+
+    if (frameTime < 1000 / FRAME_RATE)
+    {
+        SDL_Delay(1000 / FRAME_RATE - frameTime);
+    }
+}
