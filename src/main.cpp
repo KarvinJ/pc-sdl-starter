@@ -8,6 +8,7 @@
 
 const int SPEED = 600;
 int score = 0;
+bool isGamePaused;
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
@@ -17,8 +18,8 @@ Mix_Music *music = nullptr;
 
 Sprite alienSprite;
 
-SDL_Texture *title = nullptr;
-SDL_Rect titleRect;
+SDL_Texture *pauseTexture = nullptr;
+SDL_Rect pauseBounds;
 
 TTF_Font *fontSquare = nullptr;
 
@@ -26,7 +27,7 @@ void quitGame()
 {
     Mix_FreeChunk(actionSound);
     SDL_DestroyTexture(alienSprite.texture);
-    SDL_DestroyTexture(title);
+    SDL_DestroyTexture(pauseTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     Mix_CloseAudio();
@@ -50,12 +51,8 @@ void handleEvents()
         // To handle key pressed more precise, I use this method for handling pause the game or jumping.
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
         {
+            isGamePaused = !isGamePaused;
             Mix_PlayChannel(-1, actionSound, 0);
-
-            score++;
-            std::string string = std::to_string(score);
-
-            updateTextureText(title, string.c_str(), fontSquare, renderer);
         }
     }
 }
@@ -95,12 +92,10 @@ void render()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    SDL_QueryTexture(title, NULL, NULL, &titleRect.w, &titleRect.h);
-    titleRect.x = SCREEN_WIDTH / 2 - titleRect.w / 2;
-    titleRect.y = SCREEN_HEIGHT / 2 - titleRect.h / 2;
-    // After I use the &titleRect.w, &titleRect.h in the SDL_QueryTexture.
-    //  I get the width and height of the actual texture
-    SDL_RenderCopy(renderer, title, NULL, &titleRect);
+    if (isGamePaused)
+    {
+        SDL_RenderCopy(renderer, pauseTexture, NULL, &pauseBounds);
+    }
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
@@ -124,7 +119,13 @@ int main(int argc, char *args[])
     fontSquare = TTF_OpenFont("res/fonts/square_sans_serif_7.ttf", 36);
 
     // load title
-    updateTextureText(title, "0", fontSquare, renderer);
+    updateTextureText(pauseTexture, "Game Paused", fontSquare, renderer);
+
+    SDL_QueryTexture(pauseTexture, NULL, NULL, &pauseBounds.w, &pauseBounds.h);
+    pauseBounds.x = SCREEN_WIDTH / 2 - pauseBounds.w / 2;
+    pauseBounds.y = 100;
+    // After I use the &pauseBounds.w, &pauseBounds.h in the SDL_QueryTexture.
+    //  I get the width and height of the actual texture
 
     alienSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
@@ -153,7 +154,12 @@ int main(int argc, char *args[])
         previousFrameTime = currentFrameTime;
 
         handleEvents();
-        update(deltaTime);
+
+        if (!isGamePaused)
+        {
+            update(deltaTime);
+        }
+
         render();
 
         // capFrameRate(currentFrameTime);
