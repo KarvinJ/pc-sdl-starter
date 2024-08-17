@@ -2,12 +2,10 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
-#include <iostream>
 #include "sdl_starter.h"
 #include "sdl_assets_loader.h"
 
 const int SPEED = 600;
-int score = 0;
 bool isGamePaused;
 
 SDL_Window *window = nullptr;
