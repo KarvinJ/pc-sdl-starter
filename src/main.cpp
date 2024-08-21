@@ -1,11 +1,7 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#include <time.h>
 #include "sdl_starter.h"
 #include "sdl_assets_loader.h"
 
-const int SPEED = 600;
 bool isGamePaused;
 
 SDL_Window *window = nullptr;
@@ -14,17 +10,37 @@ SDL_Renderer *renderer = nullptr;
 Mix_Chunk *actionSound = nullptr;
 Mix_Music *music = nullptr;
 
-Sprite alienSprite;
+Sprite playerSprite;
+
+const int PLAYER_SPEED = 600;
 
 SDL_Texture *pauseTexture = nullptr;
 SDL_Rect pauseBounds;
 
 TTF_Font *fontSquare = nullptr;
 
+SDL_Rect ball = {SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2, 32, 32};
+
+int ballVelocityX = 425;
+int ballVelocityY = 425;
+
+int colorIndex;
+
+SDL_Color colors[] = {
+    {128, 128, 128, 0}, // gray 
+    {255, 255, 255, 0}, // white
+    {255, 0, 0, 0},     // red
+    {0, 255, 0, 0},     // green
+    {0, 0, 255, 0},     // blue
+    {255, 255, 0, 0},   // brown
+    {0, 255, 255, 0},   // cyan
+    {255, 0, 255, 0},   // purple
+};
+
 void quitGame()
 {
     Mix_FreeChunk(actionSound);
-    SDL_DestroyTexture(alienSprite.texture);
+    SDL_DestroyTexture(playerSprite.texture);
     SDL_DestroyTexture(pauseTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
@@ -55,29 +71,59 @@ void handleEvents()
     }
 }
 
+int rand_range(int min, int max)
+{
+    return min + rand() / (RAND_MAX / (max - min + 1) + 1);
+}
+
 void update(float deltaTime)
 {
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
-    if (currentKeyStates[SDL_SCANCODE_W] && alienSprite.textureBounds.y > 0)
+    if (currentKeyStates[SDL_SCANCODE_W] && playerSprite.textureBounds.y > 0)
     {
-        alienSprite.textureBounds.y -= SPEED * deltaTime;
+        playerSprite.textureBounds.y -= PLAYER_SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_S] && alienSprite.textureBounds.y < SCREEN_HEIGHT - alienSprite.textureBounds.h)
+    else if (currentKeyStates[SDL_SCANCODE_S] && playerSprite.textureBounds.y < SCREEN_HEIGHT - playerSprite.textureBounds.h)
     {
-        alienSprite.textureBounds.y += SPEED * deltaTime;
+        playerSprite.textureBounds.y += PLAYER_SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_A] && alienSprite.textureBounds.x > 0)
+    else if (currentKeyStates[SDL_SCANCODE_A] && playerSprite.textureBounds.x > 0)
     {
-        alienSprite.textureBounds.x -= SPEED * deltaTime;
+        playerSprite.textureBounds.x -= PLAYER_SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_D] && alienSprite.textureBounds.x < SCREEN_WIDTH - alienSprite.textureBounds.w)
+    else if (currentKeyStates[SDL_SCANCODE_D] && playerSprite.textureBounds.x < SCREEN_WIDTH - playerSprite.textureBounds.w)
     {
-        alienSprite.textureBounds.x += SPEED * deltaTime;
+        playerSprite.textureBounds.x += PLAYER_SPEED * deltaTime;
     }
+
+    if (ball.x < 0 || ball.x > SCREEN_WIDTH - ball.w)
+    {
+        ballVelocityX *= -1;
+
+        colorIndex = rand_range(0, 5);
+    }
+
+    else if (ball.y < 0 || ball.y > SCREEN_HEIGHT - ball.h)
+    {
+        ballVelocityY *= -1;
+
+        colorIndex = rand_range(0, 5);
+    }
+
+    else if (SDL_HasIntersection(&playerSprite.textureBounds, &ball))
+    {
+        ballVelocityX *= -1;
+        ballVelocityY *= -1;
+
+        colorIndex = rand_range(0, 5);
+    }
+
+    ball.x += ballVelocityX * deltaTime;
+    ball.y += ballVelocityY * deltaTime;
 }
 
 void renderSprite(Sprite sprite)
@@ -95,9 +141,11 @@ void render()
         SDL_RenderCopy(renderer, pauseTexture, NULL, &pauseBounds);
     }
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, colors[colorIndex].r, colors[colorIndex].g, colors[colorIndex].b, 255);
 
-    renderSprite(alienSprite);
+    SDL_RenderFillRect(renderer, &ball);
+
+    renderSprite(playerSprite);
 
     SDL_RenderPresent(renderer);
 }
@@ -125,7 +173,7 @@ int main(int argc, char *args[])
     // After I use the &pauseBounds.w, &pauseBounds.h in the SDL_QueryTexture.
     //  I get the width and height of the actual texture
 
-    alienSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    playerSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
     actionSound = loadSound("res/sounds/magic.wav");
 
