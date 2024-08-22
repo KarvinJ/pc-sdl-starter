@@ -2,8 +2,6 @@
 #include "sdl_starter.h"
 #include "sdl_assets_loader.h"
 
-bool isGamePaused;
-
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 
@@ -14,6 +12,8 @@ Sprite playerSprite;
 
 const int PLAYER_SPEED = 600;
 
+bool isGamePaused;
+
 SDL_Texture *pauseTexture = nullptr;
 SDL_Rect pauseBounds;
 
@@ -21,8 +21,8 @@ TTF_Font *fontSquare = nullptr;
 
 SDL_Rect ball = {SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2, 32, 32};
 
-int ballVelocityX = 425;
-int ballVelocityY = 425;
+int ballVelocityX = 400;
+int ballVelocityY = 400;
 
 int colorIndex;
 
@@ -39,6 +39,7 @@ SDL_Color colors[] = {
 
 void quitGame()
 {
+    Mix_FreeMusic(music);
     Mix_FreeChunk(actionSound);
     SDL_DestroyTexture(playerSprite.texture);
     SDL_DestroyTexture(pauseTexture);
@@ -103,7 +104,7 @@ void update(float deltaTime)
     if (ball.x < 0 || ball.x > SCREEN_WIDTH - ball.w)
     {
         ballVelocityX *= -1;
-
+        
         colorIndex = rand_range(0, 5);
     }
 

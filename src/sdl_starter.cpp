@@ -1,4 +1,5 @@
 #include "sdl_starter.h"
+#include <iostream>
 
 int startSDL(SDL_Window *window, SDL_Renderer *renderer)
 {
