@@ -1,6 +1,6 @@
-#include <time.h>
 #include "sdl_starter.h"
 #include "sdl_assets_loader.h"
+#include <time.h>
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
@@ -104,7 +104,7 @@ void update(float deltaTime)
     if (ball.x < 0 || ball.x > SCREEN_WIDTH - ball.w)
     {
         ballVelocityX *= -1;
-        
+
         colorIndex = rand_range(0, 5);
     }
 
