@@ -183,7 +183,7 @@ void render()
 
 int main(int argc, char *args[])
 {
-    window = SDL_CreateWindow("My Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("My Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -195,7 +195,7 @@ int main(int argc, char *args[])
     if (SDL_NumJoysticks() < 1)
     {
         printf("No game controllers connected!\n");
-        return -1;
+        // return -1;
     }
     else
     {
