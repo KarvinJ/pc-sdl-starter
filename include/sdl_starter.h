@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <iostream>
 
 const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 544;

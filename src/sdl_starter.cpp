@@ -2,11 +2,10 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
-#include <iostream>
 
 int startSDL(SDL_Window *window, SDL_Renderer *renderer)
 {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0)
     {
         std::cout << "SDL crashed. Error: " << SDL_GetError();
         return 1;

@@ -4,6 +4,7 @@
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
+SDL_GameController *controller = nullptr;
 
 Mix_Chunk *actionSound = nullptr;
 Mix_Music *music = nullptr;
@@ -27,7 +28,7 @@ int ballVelocityY = 400;
 int colorIndex;
 
 SDL_Color colors[] = {
-    {128, 128, 128, 0}, // gray 
+    {128, 128, 128, 0}, // gray
     {255, 255, 255, 0}, // white
     {255, 0, 0, 0},     // red
     {0, 255, 0, 0},     // green
@@ -69,6 +70,12 @@ void handleEvents()
             isGamePaused = !isGamePaused;
             Mix_PlayChannel(-1, actionSound, 0);
         }
+
+        if (event.type == SDL_CONTROLLERBUTTONDOWN && event.cbutton.button == SDL_CONTROLLER_BUTTON_START)
+        {
+            isGamePaused = !isGamePaused;
+            Mix_PlayChannel(-1, actionSound, 0);
+        }
     }
 }
 
@@ -81,6 +88,7 @@ void update(float deltaTime)
 {
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
+    // keyboard
     if (currentKeyStates[SDL_SCANCODE_W] && playerSprite.textureBounds.y > 0)
     {
         playerSprite.textureBounds.y -= PLAYER_SPEED * deltaTime;
@@ -100,6 +108,28 @@ void update(float deltaTime)
     {
         playerSprite.textureBounds.x += PLAYER_SPEED * deltaTime;
     }
+
+    // controller
+    if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP) && playerSprite.textureBounds.y > 0) 
+    {
+        playerSprite.textureBounds.y -= PLAYER_SPEED * deltaTime;
+    }
+
+    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN) && playerSprite.textureBounds.y < SCREEN_HEIGHT - playerSprite.textureBounds.h) 
+    {
+        playerSprite.textureBounds.y += PLAYER_SPEED * deltaTime;
+    }
+
+    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT) && playerSprite.textureBounds.x > 0) 
+    {
+        playerSprite.textureBounds.x -= PLAYER_SPEED * deltaTime;
+    }
+
+    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) && playerSprite.textureBounds.x < SCREEN_WIDTH - playerSprite.textureBounds.w) 
+    {
+        playerSprite.textureBounds.x += PLAYER_SPEED * deltaTime;
+    }
+
 
     if (ball.x < 0 || ball.x > SCREEN_WIDTH - ball.w)
     {
@@ -162,6 +192,21 @@ int main(int argc, char *args[])
         return 1;
     }
 
+    if (SDL_NumJoysticks() < 1)
+    {
+        printf("No game controllers connected!\n");
+        return -1;
+    }
+    else
+    {
+        controller = SDL_GameControllerOpen(0);
+        if (controller == NULL)
+        {
+            printf("Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+            return -1;
+        }
+    }
+
     // load font
     fontSquare = TTF_OpenFont("res/fonts/square_sans_serif_7.ttf", 36);
 
@@ -199,6 +244,8 @@ int main(int argc, char *args[])
         currentFrameTime = SDL_GetTicks();
         deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
         previousFrameTime = currentFrameTime;
+
+        SDL_GameControllerUpdate();
 
         handleEvents();
 
