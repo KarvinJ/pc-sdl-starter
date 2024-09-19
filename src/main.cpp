@@ -156,6 +156,8 @@ void update(float deltaTime)
 
         colorIndex = rand_range(0, 5);
 
+        Mix_PlayChannel(-1, actionSound, 0);
+
         score++;
 
         std::string scoreString = "score: " + std::to_string(score);
@@ -190,7 +192,7 @@ void render()
 
     SDL_QueryTexture(scoreTexture, NULL, NULL, &scoreBounds.w, &scoreBounds.h);
     scoreBounds.x = 400;
-    scoreBounds.y = scoreBounds.h / 2 - 10;
+    scoreBounds.y = scoreBounds.h / 2;
     SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreBounds);
 
     SDL_RenderPresent(renderer);
