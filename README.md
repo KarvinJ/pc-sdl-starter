@@ -2,8 +2,8 @@
 A Windows SDL2 starter template. 
 
 # Requirements
-Install the latest version of MinGW-w64 via MSYS2: [MinGW](https://code.visualstudio.com/docs/cpp/config-mingw) 
-MinGW-w64 version use: gcc-g++ versions (Rev3, Built by MSYS2 project) 13.2.0
+* Install the latest version of MinGW-w64 via MSYS2: [MinGW](https://code.visualstudio.com/docs/cpp/config-mingw) 
+* MinGW-w64 version use: gcc-g++ versions (Rev3, Built by MSYS2 project) 13.2.0
 
 # Building
 
