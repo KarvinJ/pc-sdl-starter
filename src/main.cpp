@@ -1,6 +1,7 @@
 #include "sdl_starter.h"
 #include "sdl_assets_loader.h"
 #include <time.h>
+#include <iostream>
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
@@ -211,16 +212,16 @@ int main(int argc, char *args[])
 
     if (SDL_NumJoysticks() < 1)
     {
-        printf("No game controllers connected!\n");
-        // return -1;
+        SDL_Log("No game controllers connected!");
+        // return 1;
     }
     else
     {
         controller = SDL_GameControllerOpen(0);
         if (controller == NULL)
         {
-            printf("Unable to open game controller! SDL Error: %s\n", SDL_GetError());
-            return -1;
+            SDL_Log("Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+            return 1;
         }
     }
 
