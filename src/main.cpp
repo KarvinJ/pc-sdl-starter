@@ -95,45 +95,45 @@ void update(float deltaTime)
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
     // keyboard
-    if (currentKeyStates[SDL_SCANCODE_W] && playerSprite.textureBounds.y > 0)
+    if (currentKeyStates[SDL_SCANCODE_W] && playerSprite.bounds.y > 0)
     {
-        playerSprite.textureBounds.y -= PLAYER_SPEED * deltaTime;
+        playerSprite.bounds.y -= PLAYER_SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_S] && playerSprite.textureBounds.y < SCREEN_HEIGHT - playerSprite.textureBounds.h)
+    else if (currentKeyStates[SDL_SCANCODE_S] && playerSprite.bounds.y < SCREEN_HEIGHT - playerSprite.bounds.h)
     {
-        playerSprite.textureBounds.y += PLAYER_SPEED * deltaTime;
+        playerSprite.bounds.y += PLAYER_SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_A] && playerSprite.textureBounds.x > 0)
+    else if (currentKeyStates[SDL_SCANCODE_A] && playerSprite.bounds.x > 0)
     {
-        playerSprite.textureBounds.x -= PLAYER_SPEED * deltaTime;
+        playerSprite.bounds.x -= PLAYER_SPEED * deltaTime;
     }
 
-    else if (currentKeyStates[SDL_SCANCODE_D] && playerSprite.textureBounds.x < SCREEN_WIDTH - playerSprite.textureBounds.w)
+    else if (currentKeyStates[SDL_SCANCODE_D] && playerSprite.bounds.x < SCREEN_WIDTH - playerSprite.bounds.w)
     {
-        playerSprite.textureBounds.x += PLAYER_SPEED * deltaTime;
+        playerSprite.bounds.x += PLAYER_SPEED * deltaTime;
     }
 
     // controller
-    if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP) && playerSprite.textureBounds.y > 0)
+    if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP) && playerSprite.bounds.y > 0)
     {
-        playerSprite.textureBounds.y -= PLAYER_SPEED * deltaTime;
+        playerSprite.bounds.y -= PLAYER_SPEED * deltaTime;
     }
 
-    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN) && playerSprite.textureBounds.y < SCREEN_HEIGHT - playerSprite.textureBounds.h)
+    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN) && playerSprite.bounds.y < SCREEN_HEIGHT - playerSprite.bounds.h)
     {
-        playerSprite.textureBounds.y += PLAYER_SPEED * deltaTime;
+        playerSprite.bounds.y += PLAYER_SPEED * deltaTime;
     }
 
-    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT) && playerSprite.textureBounds.x > 0)
+    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT) && playerSprite.bounds.x > 0)
     {
-        playerSprite.textureBounds.x -= PLAYER_SPEED * deltaTime;
+        playerSprite.bounds.x -= PLAYER_SPEED * deltaTime;
     }
 
-    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) && playerSprite.textureBounds.x < SCREEN_WIDTH - playerSprite.textureBounds.w)
+    else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) && playerSprite.bounds.x < SCREEN_WIDTH - playerSprite.bounds.w)
     {
-        playerSprite.textureBounds.x += PLAYER_SPEED * deltaTime;
+        playerSprite.bounds.x += PLAYER_SPEED * deltaTime;
     }
 
     if (ball.x < 0 || ball.x > SCREEN_WIDTH - ball.w)
@@ -150,7 +150,7 @@ void update(float deltaTime)
         colorIndex = rand_range(0, 5);
     }
 
-    else if (SDL_HasIntersection(&playerSprite.textureBounds, &ball))
+    else if (SDL_HasIntersection(&playerSprite.bounds, &ball))
     {
         ballVelocityX *= -1;
         ballVelocityY *= -1;
@@ -172,7 +172,7 @@ void update(float deltaTime)
 
 void renderSprite(Sprite &sprite)
 {
-    SDL_RenderCopy(renderer, sprite.texture, NULL, &sprite.textureBounds);
+    SDL_RenderCopy(renderer, sprite.texture, NULL, &sprite.bounds);
 }
 
 void render()
