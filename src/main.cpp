@@ -139,14 +139,12 @@ void update(float deltaTime)
     if (ball.x < 0 || ball.x > SCREEN_WIDTH - ball.w)
     {
         ballVelocityX *= -1;
-
         colorIndex = rand_range(0, 5);
     }
 
     else if (ball.y < 0 || ball.y > SCREEN_HEIGHT - ball.h)
     {
         ballVelocityY *= -1;
-
         colorIndex = rand_range(0, 5);
     }
 
