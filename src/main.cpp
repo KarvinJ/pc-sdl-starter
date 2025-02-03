@@ -168,11 +168,6 @@ void update(float deltaTime)
     ball.y += ballVelocityY * deltaTime;
 }
 
-void renderSprite(Sprite &sprite)
-{
-    SDL_RenderCopy(renderer, sprite.texture, NULL, &sprite.bounds);
-}
-
 void render()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -182,7 +177,7 @@ void render()
 
     SDL_RenderFillRect(renderer, &ball);
 
-    renderSprite(playerSprite);
+    renderSprite(renderer, playerSprite);
 
     if (isGamePaused)
     {
