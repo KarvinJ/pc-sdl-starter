@@ -160,7 +160,6 @@ void update(float deltaTime)
         score++;
 
         std::string scoreString = "score: " + std::to_string(score);
-
         updateTextureText(scoreTexture, scoreString.c_str(), fontSquare, renderer);
     }
 
