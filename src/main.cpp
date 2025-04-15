@@ -1,7 +1,7 @@
 #include "sdl_starter.h"
 #include "sdl_assets_loader.h"
 #include <time.h>
-#include <iostream>
+#include <string>
 
 //I can add this using, to reduce the typing, I can add this for vector, cout, and many more.
 using std::string;
