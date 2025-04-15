@@ -3,6 +3,9 @@
 #include <time.h>
 #include <iostream>
 
+//I can add this using, to reduce the typing, I can add this for vector, cout, and many more.
+using std::string;
+
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 SDL_GameController *controller = nullptr;
@@ -159,7 +162,7 @@ void update(float deltaTime)
 
         score++;
 
-        std::string scoreString = "score: " + std::to_string(score);
+        string scoreString = "score: " + std::to_string(score);
         updateTextureText(scoreTexture, scoreString.c_str(), fontSquare, renderer);
     }
 
@@ -205,7 +208,6 @@ int main(int argc, char *args[])
     if (SDL_NumJoysticks() < 1)
     {
         SDL_Log("No game controllers connected!");
-        // return 1;
     }
     else
     {
