@@ -1,6 +1,6 @@
 #include "sdl_starter.h"
 
-int startSDL(SDL_Window *window, SDL_Renderer *renderer)
+int startSDLSystems(SDL_Window *window, SDL_Renderer *renderer)
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0)
     {
@@ -118,6 +118,14 @@ void updateTextureText(SDL_Texture *&texture, const char *text, TTF_Font *&fontS
     }
 
     SDL_FreeSurface(surface);
+}
+
+void stopSDLSystems()
+{
+    Mix_CloseAudio();
+    IMG_Quit();
+    TTF_Quit();
+    SDL_Quit();
 }
 
 void capFrameRate(Uint32 frameStartTime)

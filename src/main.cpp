@@ -9,28 +9,29 @@ SDL_GameController *controller = nullptr;
 Mix_Chunk *actionSound = nullptr;
 Mix_Music *music = nullptr;
 
+TTF_Font *fontSquare = nullptr;
+
 Sprite playerSprite;
 
 const int PLAYER_SPEED = 600;
 
-bool isGamePaused;
+bool isGameRunning = true;
+bool isGamePaused = false;
 
 SDL_Texture *pauseTexture = nullptr;
 SDL_Rect pauseBounds;
 
-SDL_Texture *scoreTexture = nullptr;
-SDL_Rect scoreBounds;
-
 int score;
 
-TTF_Font *fontSquare = nullptr;
+SDL_Texture *scoreTexture = nullptr;
+SDL_Rect scoreBounds;
 
 SDL_Rect ball = {SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2, 32, 32};
 
 int ballVelocityX = 400;
 int ballVelocityY = 400;
 
-int colorIndex;
+int colorIndex = 0;
 
 SDL_Color colors[] = {
     {128, 128, 128, 0}, // gray
@@ -43,20 +44,6 @@ SDL_Color colors[] = {
     {255, 0, 255, 0},   // purple
 };
 
-void quitGame()
-{
-    Mix_FreeMusic(music);
-    Mix_FreeChunk(actionSound);
-    SDL_DestroyTexture(playerSprite.texture);
-    SDL_DestroyTexture(pauseTexture);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    Mix_CloseAudio();
-    IMG_Quit();
-    TTF_Quit();
-    SDL_Quit();
-}
-
 void handleEvents()
 {
     SDL_Event event;
@@ -65,8 +52,7 @@ void handleEvents()
     {
         if (event.type == SDL_QUIT || event.key.keysym.sym == SDLK_ESCAPE)
         {
-            quitGame();
-            exit(0);
+            isGameRunning = false;
         }
 
         // To handle key pressed more precise, I use this method for handling pause the game or jumping.
@@ -84,7 +70,7 @@ void handleEvents()
     }
 }
 
-int rand_range(int min, int max)
+int getRandomNumberBetweenRange(int min, int max)
 {
     return min + rand() / (RAND_MAX / (max - min + 1) + 1);
 }
@@ -138,13 +124,13 @@ void update(float deltaTime)
     if (ball.x < 0 || ball.x > SCREEN_WIDTH - ball.w)
     {
         ballVelocityX *= -1;
-        colorIndex = rand_range(0, 5);
+        colorIndex = getRandomNumberBetweenRange(0, 5);
     }
 
     else if (ball.y < 0 || ball.y > SCREEN_HEIGHT - ball.h)
     {
         ballVelocityY *= -1;
-        colorIndex = rand_range(0, 5);
+        colorIndex = getRandomNumberBetweenRange(0, 5);
     }
 
     else if (SDL_HasIntersection(&playerSprite.bounds, &ball))
@@ -152,7 +138,7 @@ void update(float deltaTime)
         ballVelocityX *= -1;
         ballVelocityY *= -1;
 
-        colorIndex = rand_range(0, 5);
+        colorIndex = getRandomNumberBetweenRange(0, 5);
 
         Mix_PlayChannel(-1, actionSound, 0);
 
@@ -195,23 +181,15 @@ int main(int argc, char *args[])
     window = SDL_CreateWindow("My Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    if (startSDL(window, renderer) > 0)
+    if (startSDLSystems(window, renderer) > 0)
     {
         return 1;
     }
 
-    if (SDL_NumJoysticks() < 1)
+    controller = SDL_GameControllerOpen(0);
+    if (controller == NULL)
     {
-        SDL_Log("No game controllers connected!");
-    }
-    else
-    {
-        controller = SDL_GameControllerOpen(0);
-        if (controller == NULL)
-        {
-            SDL_Log("Unable to open game controller! SDL Error: %s\n", SDL_GetError());
-            return 1;
-        }
+        SDL_Log("Unable to open game controller! SDL Error: %s\n", SDL_GetError());
     }
 
     // load font
@@ -248,7 +226,7 @@ int main(int argc, char *args[])
     Uint32 currentFrameTime = previousFrameTime;
     float deltaTime = 0.0f;
 
-    while (true)
+    while (isGameRunning)
     {
         currentFrameTime = SDL_GetTicks();
         deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
@@ -267,4 +245,14 @@ int main(int argc, char *args[])
 
         // capFrameRate(currentFrameTime);
     }
+
+    Mix_FreeMusic(music);
+    Mix_FreeChunk(actionSound);
+    SDL_DestroyTexture(playerSprite.texture);
+    SDL_DestroyTexture(pauseTexture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    stopSDLSystems();
+
+    return 0;
 }

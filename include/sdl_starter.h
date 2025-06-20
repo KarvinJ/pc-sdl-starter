@@ -15,7 +15,7 @@ typedef struct
     SDL_Rect bounds;
 } Sprite;
 
-int startSDL(SDL_Window *window, SDL_Renderer *renderer);
+int startSDLSystems(SDL_Window *window, SDL_Renderer *renderer);
 
 Sprite loadSprite(SDL_Renderer *renderer, const char *filePath, int positionX, int positionY);
 
@@ -26,5 +26,7 @@ Mix_Chunk *loadSound(const char *filePath);
 Mix_Music *loadMusic(const char *filePath);
 
 void updateTextureText(SDL_Texture *&texture, const char *text, TTF_Font *&fontSquare, SDL_Renderer *renderer);
+
+void stopSDLSystems();
 
 void capFrameRate(Uint32 frameStartTime);
