@@ -30,7 +30,6 @@ int startSDL(SDL_Window *window, SDL_Renderer *renderer)
         return 1;
     }
 
-    // Initialize SDL_mixer
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
     {
         SDL_LogCritical(1, "SDL_mixer could not initialize!");
