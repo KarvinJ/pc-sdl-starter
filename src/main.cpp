@@ -1,5 +1,4 @@
 #include "sdl_starter.h"
-#include "sdl_assets_loader.h"
 #include <time.h>
 #include <string>
 
@@ -194,7 +193,6 @@ void render()
 int main(int argc, char *args[])
 {
     window = SDL_CreateWindow("My Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (startSDL(window, renderer) > 0)
