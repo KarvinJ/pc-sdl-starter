@@ -6,7 +6,7 @@ SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 SDL_GameController *controller = nullptr;
 
-Mix_Chunk *actionSound = nullptr;
+Mix_Chunk *sound = nullptr;
 Mix_Music *music = nullptr;
 
 TTF_Font *fontSquare = nullptr;
@@ -59,13 +59,13 @@ void handleEvents()
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
         {
             isGamePaused = !isGamePaused;
-            Mix_PlayChannel(-1, actionSound, 0);
+            Mix_PlayChannel(-1, sound, 0);
         }
 
         if (event.type == SDL_CONTROLLERBUTTONDOWN && event.cbutton.button == SDL_CONTROLLER_BUTTON_START)
         {
             isGamePaused = !isGamePaused;
-            Mix_PlayChannel(-1, actionSound, 0);
+            Mix_PlayChannel(-1, sound, 0);
         }
     }
 }
@@ -140,7 +140,7 @@ void update(float deltaTime)
 
         colorIndex = getRandomNumberBetweenRange(0, 5);
 
-        Mix_PlayChannel(-1, actionSound, 0);
+        Mix_PlayChannel(-1, sound, 0);
 
         score++;
 
@@ -208,10 +208,10 @@ int main(int argc, char *args[])
 
     playerSprite = loadSprite(renderer, "res/sprites/alien_1.png", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
-    actionSound = loadSound("res/sounds/magic.wav");
+    sound = loadSound("res/sounds/magic.wav");
 
     // method to reduce the volume of the sound in half.
-    Mix_VolumeChunk(actionSound, MIX_MAX_VOLUME / 2);
+    Mix_VolumeChunk(sound, MIX_MAX_VOLUME / 2);
 
     // Load music file (only one data piece, intended for streaming)
     music = loadMusic("res/music/music.wav");
@@ -247,7 +247,7 @@ int main(int argc, char *args[])
     }
 
     Mix_FreeMusic(music);
-    Mix_FreeChunk(actionSound);
+    Mix_FreeChunk(sound);
     SDL_DestroyTexture(playerSprite.texture);
     SDL_DestroyTexture(pauseTexture);
     SDL_DestroyRenderer(renderer);
