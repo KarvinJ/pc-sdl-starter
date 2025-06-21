@@ -68,9 +68,7 @@ void renderSprite(SDL_Renderer *renderer, Sprite &sprite)
 
 Mix_Chunk *loadSound(const char *filePath)
 {
-    Mix_Chunk *sound = nullptr;
-
-    sound = Mix_LoadWAV(filePath);
+    Mix_Chunk *sound = Mix_LoadWAV(filePath);
     if (sound == nullptr)
     {
         SDL_Log("Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError());
@@ -81,9 +79,7 @@ Mix_Chunk *loadSound(const char *filePath)
 
 Mix_Music *loadMusic(const char *filePath)
 {
-    Mix_Music *music = nullptr;
-
-    music = Mix_LoadMUS(filePath);
+    Mix_Music *music = Mix_LoadMUS(filePath);
     if (music == nullptr)
     {
         SDL_Log("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
