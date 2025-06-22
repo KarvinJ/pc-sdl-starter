@@ -186,10 +186,9 @@ int main(int argc, char *args[])
         return 1;
     }
 
-    controller = SDL_GameControllerOpen(0);
-    if (controller == NULL)
+    if (SDL_NumJoysticks() > 0 && SDL_IsGameController(0))
     {
-        SDL_Log("Unable to open game controller! SDL Error: %s\n", SDL_GetError());
+        controller = SDL_GameControllerOpen(0);
     }
 
     // load font
@@ -231,8 +230,6 @@ int main(int argc, char *args[])
         currentFrameTime = SDL_GetTicks();
         deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
         previousFrameTime = currentFrameTime;
-
-        SDL_GameControllerUpdate();
 
         handleEvents();
 
