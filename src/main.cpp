@@ -161,6 +161,9 @@ void render()
 
     SDL_RenderFillRect(renderer, &ball);
 
+    // SDL_RenderFillCircle(renderer, 100, 100, 20);
+    // SDL_RenderDrawCircle(renderer, 400, 400, 20);
+
     renderSprite(renderer, playerSprite);
 
     if (isGamePaused)

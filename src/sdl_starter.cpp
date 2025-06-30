@@ -116,6 +116,89 @@ void updateTextureText(SDL_Texture *&texture, const char *text, TTF_Font *&fontS
     SDL_FreeSurface(surface);
 }
 
+// The code for the drawing of the circle is using the Midpoint Circle Algorithm.
+void SDL_RenderDrawCircle(SDL_Renderer *renderer, int x, int y, int radius)
+{
+    int offsetx = 0; 
+    int offsety = radius; 
+    int diameter  = radius - 1;
+    int status = 0;
+
+    while (offsety >= offsetx)
+    {
+        status += SDL_RenderDrawPoint(renderer, x + offsetx, y + offsety);
+        status += SDL_RenderDrawPoint(renderer, x + offsety, y + offsetx);
+        status += SDL_RenderDrawPoint(renderer, x - offsetx, y + offsety);
+        status += SDL_RenderDrawPoint(renderer, x - offsety, y + offsetx);
+        status += SDL_RenderDrawPoint(renderer, x + offsetx, y - offsety);
+        status += SDL_RenderDrawPoint(renderer, x + offsety, y - offsetx);
+        status += SDL_RenderDrawPoint(renderer, x - offsetx, y - offsety);
+        status += SDL_RenderDrawPoint(renderer, x - offsety, y - offsetx);
+
+        if (status < 0)
+        {
+            status = -1;
+            break;
+        }
+
+        if (diameter >= 2 * offsetx)
+        {
+            diameter -= 2 * offsetx + 1;
+            offsetx += 1;
+        }
+        else if (diameter < 2 * (radius - offsety))
+        {
+            diameter += 2 * offsety - 1;
+            offsety -= 1;
+        }
+        else
+        {
+            diameter += 2 * (offsety - offsetx - 1);
+            offsety -= 1;
+            offsetx += 1;
+        }
+    }
+}
+
+void SDL_RenderFillCircle(SDL_Renderer *renderer, int x, int y, int radius)
+{
+    int offsetx = 0; 
+    int offsety = radius; 
+    int diameter  = radius - 1;
+    int status = 0;
+
+    while (offsety >= offsetx)
+    {
+        status += SDL_RenderDrawLine(renderer, x - offsety, y + offsetx, x + offsety, y + offsetx);
+        status += SDL_RenderDrawLine(renderer, x - offsetx, y + offsety, x + offsetx, y + offsety);
+        status += SDL_RenderDrawLine(renderer, x - offsetx, y - offsety, x + offsetx, y - offsety);
+        status += SDL_RenderDrawLine(renderer, x - offsety, y - offsetx, x + offsety, y - offsetx);
+
+        if (status < 0)
+        {
+            status = -1;
+            break;
+        }
+
+        if (diameter >= 2 * offsetx)
+        {
+            diameter -= 2 * offsetx + 1;
+            offsetx += 1;
+        }
+        else if (diameter < 2 * (radius - offsety))
+        {
+            diameter += 2 * offsety - 1;
+            offsety -= 1;
+        }
+        else
+        {
+            diameter += 2 * (offsety - offsetx - 1);
+            offsety -= 1;
+            offsetx += 1;
+        }
+    }
+}
+
 void stopSDLSystems()
 {
     Mix_CloseAudio();
