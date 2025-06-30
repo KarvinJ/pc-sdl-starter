@@ -121,25 +121,18 @@ void SDL_RenderDrawCircle(SDL_Renderer *renderer, int x, int y, int radius)
 {
     int offsetx = 0; 
     int offsety = radius; 
-    int diameter  = radius - 1;
-    int status = 0;
+    int diameter = radius - 1;
 
     while (offsety >= offsetx)
     {
-        status += SDL_RenderDrawPoint(renderer, x + offsetx, y + offsety);
-        status += SDL_RenderDrawPoint(renderer, x + offsety, y + offsetx);
-        status += SDL_RenderDrawPoint(renderer, x - offsetx, y + offsety);
-        status += SDL_RenderDrawPoint(renderer, x - offsety, y + offsetx);
-        status += SDL_RenderDrawPoint(renderer, x + offsetx, y - offsety);
-        status += SDL_RenderDrawPoint(renderer, x + offsety, y - offsetx);
-        status += SDL_RenderDrawPoint(renderer, x - offsetx, y - offsety);
-        status += SDL_RenderDrawPoint(renderer, x - offsety, y - offsetx);
-
-        if (status < 0)
-        {
-            status = -1;
-            break;
-        }
+        SDL_RenderDrawPoint(renderer, x + offsetx, y + offsety);
+        SDL_RenderDrawPoint(renderer, x - offsetx, y + offsety);
+        SDL_RenderDrawPoint(renderer, x + offsety, y + offsetx);
+        SDL_RenderDrawPoint(renderer, x - offsety, y + offsetx);
+        SDL_RenderDrawPoint(renderer, x + offsetx, y - offsety);
+        SDL_RenderDrawPoint(renderer, x + offsety, y - offsetx);
+        SDL_RenderDrawPoint(renderer, x - offsetx, y - offsety);
+        SDL_RenderDrawPoint(renderer, x - offsety, y - offsetx);
 
         if (diameter >= 2 * offsetx)
         {
@@ -165,20 +158,13 @@ void SDL_RenderFillCircle(SDL_Renderer *renderer, int x, int y, int radius)
     int offsetx = 0; 
     int offsety = radius; 
     int diameter  = radius - 1;
-    int status = 0;
 
     while (offsety >= offsetx)
     {
-        status += SDL_RenderDrawLine(renderer, x - offsety, y + offsetx, x + offsety, y + offsetx);
-        status += SDL_RenderDrawLine(renderer, x - offsetx, y + offsety, x + offsetx, y + offsety);
-        status += SDL_RenderDrawLine(renderer, x - offsetx, y - offsety, x + offsetx, y - offsety);
-        status += SDL_RenderDrawLine(renderer, x - offsety, y - offsetx, x + offsety, y - offsetx);
-
-        if (status < 0)
-        {
-            status = -1;
-            break;
-        }
+        SDL_RenderDrawLine(renderer, x - offsety, y + offsetx, x + offsety, y + offsetx);
+        SDL_RenderDrawLine(renderer, x - offsetx, y + offsety, x + offsetx, y + offsety);
+        SDL_RenderDrawLine(renderer, x - offsetx, y - offsety, x + offsetx, y - offsety);
+        SDL_RenderDrawLine(renderer, x - offsety, y - offsetx, x + offsety, y - offsetx);
 
         if (diameter >= 2 * offsetx)
         {
